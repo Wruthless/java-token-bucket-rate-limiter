@@ -4,7 +4,7 @@ To build the core of a rate limiter, we must ensure that between any two seconds
 `N` transactions are allowed.
 
 Consider the first transaction `t0`. Until `(t0 + 1)s`, we are allowed to make only N transactions.
-To ensure this, at the time of the next transaction, check if `current time <= (t0 + 1)`. If not, we
+To ensure this, at the time of the next transaction, check if `current time ≤ (t0 + 1)`. If not, we
 have entered into a different second and able to make `N` transactions.
 
 The following code section demonstrates:
