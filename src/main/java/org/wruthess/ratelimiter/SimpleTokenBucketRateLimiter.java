@@ -26,19 +26,24 @@ public class SimpleTokenBucketRateLimiter implements RateLimiter {
         }
 
         synchronized (mLock) {
+            // Add one second to the moment when the first transaction is done.
             if(mLastExecutionNanos == 0L) {
-                mCounter++;
+                mCounter++; // Allocate first token.
                 mLastExecutionNanos = System.nanoTime();
-                mNextSecondBoundary = mLastExecutionNanos + NANO_PER_SECOND;
+                mNextSecondBoundary = mLastExecutionNanos + NANO_PER_SECOND; // (10^9).
                 invoke(code);
                 return true;
             } else {
+
+                // Until (tn + 1)s, N transactions are allowed. At the next transaction, check if
+                // current time <= (tn + 1). If not, we are in another second and are once
+                // again allowed to make N transactions.
                 long now = System.nanoTime();
-                if (now <= mNextSecondBoundary) {
-                    if (mCounter < mTPS) {
+                if (now <= mNextSecondBoundary) {       // In time limit of current second.
+                    if (mCounter < mTPS) {              // If a token is available.
                         mLastExecutionNanos = now;
-                        mCounter++;
-                        invoke(code);
+                        mCounter++;                     // Allocate token.
+                        invoke(code);                   // Invoke code passed to throttle().
                         return true;
                     } else {
                         return false;

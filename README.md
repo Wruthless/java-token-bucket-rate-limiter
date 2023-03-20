@@ -1,1 +1,1 @@
-# Java Fixed Window Rate Limiter
+# Java Token Bucket Limiter
