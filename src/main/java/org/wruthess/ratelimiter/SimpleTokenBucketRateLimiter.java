@@ -22,6 +22,7 @@ public class SimpleTokenBucketRateLimiter implements RateLimiter {
     public boolean throttle(Code code) {
 
         if (mTPS <= 0) {
+            // Nothing passes.
             return false;
         }
 

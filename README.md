@@ -33,3 +33,25 @@ if(mLastExecutionNanos == 0L) {
     return true;
 }
 ```
+If we execute code after entering into a different second we reset our last execution time, number
+of tokens available, and repeat the same process by calling `throttle()` again. The method knows
+how to handle a new second.
+
+```java
+if (now <= mNextSecondBoundary) {       // In time limit of current second.
+    if (mCounter < mTPS) {              // If a token is available.
+        mLastExecutionNanos = now;
+        mCounter++;                     // Allocate token.
+        invoke(code);                   // Invoke code passed to throttle().
+        return true;
+    } else {
+        return false;
+    }
+} else {
+    // Reset the counter in different second
+    mCounter = 0;
+    mLastExecutionNanos = 0L;
+    mNextSecondBoundary = 0L;
+    return throttle(code);
+}
+```
